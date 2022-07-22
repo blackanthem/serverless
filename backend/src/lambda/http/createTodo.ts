@@ -5,7 +5,7 @@ import { getUserId } from '../utils'
 import { createTodo } from '../../businessLogic/todos'
 import { createLogger } from '../../utils/logger'
 
-const logger = createLogger('getTodos')
+const logger = createLogger('createTodo')
 
 export const handler = async (
   event: APIGatewayProxyEvent
