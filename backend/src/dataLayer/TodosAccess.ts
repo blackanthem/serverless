@@ -109,7 +109,7 @@ export class TodosAccess {
     }
   }
 
-  async updateAttachmentUrl(todoId: string, attachmentUrl: string, userId) {
+  async updateAttachmentUrl(todoId: string, userId, attachmentUrl: string) {
     await this.docClient
       .update({
         TableName: this.tableName,
