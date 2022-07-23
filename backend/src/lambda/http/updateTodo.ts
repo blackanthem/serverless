@@ -17,7 +17,7 @@ export const handler = async (
   const todoId = event.pathParameters.todoId
   const todo: UpdateTodoRequest = JSON.parse(event.body)
 
-  await updateTodo(userId, todoId, todo)
+  const res = await updateTodo(userId, todoId, todo)
 
   return {
     statusCode: 200,
@@ -25,7 +25,7 @@ export const handler = async (
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: '',
+    body: JSON.stringify({ res }),
     isBase64Encoded: false
   }
 }

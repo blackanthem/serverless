@@ -39,13 +39,11 @@ export class TodosAccess {
     }
   }
 
-  async getTodoItem(todoId: string): Promise<TodoItem> {
+  async getTodoItem(todoId: string, userId): Promise<TodoItem> {
     const result = await this.docClient
       .get({
         TableName: this.tableName,
-        Key: {
-          todoId
-        }
+        Key: { todoId, userId }
       })
       .promise()
 
@@ -65,38 +63,50 @@ export class TodosAccess {
   }
 
   async updateTodoItem(todoId: string, todoUpdate: TodoUpdate) {
-    await this.docClient
-      .update({
-        TableName: this.tableName,
-        Key: {
-          todoId
-        },
-        UpdateExpression: 'set #name = :name, dueDate = :dueDate, done = :done',
-        ExpressionAttributeNames: {
-          '#name': 'name'
-        },
-        ExpressionAttributeValues: {
-          ':name': todoUpdate.name,
-          ':dueDate': todoUpdate.dueDate,
-          ':done': todoUpdate.done
-        }
-      })
-      .promise()
+    try {
+      const res = await this.docClient
+        .update({
+          TableName: this.tableName,
+          Key: {
+            todoId
+          },
+          UpdateExpression:
+            'set #name = :name, dueDate = :dueDate, done = :done',
+          ExpressionAttributeNames: {
+            '#name': 'name'
+          },
+          ExpressionAttributeValues: {
+            ':name': todoUpdate.name,
+            ':dueDate': todoUpdate.dueDate,
+            ':done': todoUpdate.done
+          }
+        })
+        .promise()
 
-    logger.info(`Update todo item — ${todoId}`)
+      logger.info(`Update todo item — ${todoId}`)
+      return res
+    } catch (error) {
+      return error
+    }
   }
 
-  async deleteTodoItem(todoId: string) {
-    await this.docClient
-      .delete({
-        TableName: this.tableName,
-        Key: {
-          todoId
-        }
-      })
-      .promise()
+  async deleteTodoItem(todoId: string, userId) {
+    try {
+      const res = await this.docClient
+        .delete({
+          TableName: this.tableName,
+          Key: {
+            todoId,
+            userId
+          }
+        })
+        .promise()
 
-    logger.info(`Delete todo item — ${todoId}`)
+      logger.info(`Delete todo item — ${todoId}`)
+      return res
+    } catch (error) {
+      return error
+    }
   }
 
   async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
