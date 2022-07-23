@@ -1,9 +1,9 @@
 import 'source-map-support/register'
 
 import {
-  APIGatewayProxyEvent,
-  APIGatewayProxyHandler,
-  APIGatewayProxyResult
+  APIGatewayProxyEvent
+  // APIGatewayProxyHandler,
+  // APIGatewayProxyResult
 } from 'aws-lambda'
 
 import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
@@ -13,9 +13,7 @@ import { createLogger } from '../../utils/logger'
 // DONE: Get all TODO items for a current user
 const logger = createLogger('getTodos')
 
-export const handler: APIGatewayProxyHandler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayProxyEvent) => {
   try {
     logger.info('Handle Get Todos request', { event })
 
@@ -28,7 +26,10 @@ export const handler: APIGatewayProxyHandler = async (
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true
       },
-      body: JSON.stringify({ items })
+      body: JSON.stringify({ items }),
+      isBase64Encoded: false
     }
-  } catch (error) {}
+  } catch (error) {
+    logger.error('Error: Handle Get Todos request', { error })
+  }
 }

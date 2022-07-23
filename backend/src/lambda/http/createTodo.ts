@@ -23,6 +23,8 @@ export const handler = async (
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(item)
+    body: JSON.stringify(item),
+    isBase64Encoded: false
+
   }
 }

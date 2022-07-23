@@ -7,7 +7,7 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
-import * as createError from 'http-errors'
+// import * as createError from 'http-errors'
 
 // TODO: Implement businessLogic
 
@@ -39,7 +39,7 @@ export async function createTodo(
     ...createTodoRequest
   }
 
-  logger.info(`Creating todo ${todoId} for user ${userId}`, {
+  logger.info(`Create todo — ${todoId} for user ${userId}`, {
     userId,
     todoId,
     todoItem: newItem
@@ -55,7 +55,7 @@ export async function updateTodo(
   todoId: string,
   updateTodoRequest: UpdateTodoRequest
 ) {
-  logger.info(`Updating todo ${todoId} for user ${userId}`, {
+  logger.info(`Update todo — ${todoId} for user ${userId}`, {
     userId,
     todoId,
     todoUpdate: updateTodoRequest
@@ -76,8 +76,6 @@ export async function updateTodo(
 }
 
 export async function deleteTodo(userId: string, todoId: string) {
-  logger.info(`Deleting todo ${todoId} for user ${userId}`, { userId, todoId })
-
   const item = await todosAccess.getTodoItem(todoId)
 
   if (!item) throw new Error('Item not found') // FIXME: 404?
@@ -90,6 +88,7 @@ export async function deleteTodo(userId: string, todoId: string) {
   }
 
   todosAccess.deleteTodoItem(todoId)
+  logger.info(`Delete todo ${todoId} for user ${userId}`, { userId, todoId })
 }
 
 export async function updateAttachmentUrl(
@@ -108,7 +107,7 @@ export async function updateAttachmentUrl(
 
   const item = await todosAccess.getTodoItem(todoId)
 
-  if (!item) throw new Error('Item not found') // FIXME: 404?
+  if (!item) throw new Error('Item not found') //TODO: FIXME: 404?
 
   if (item.userId !== userId) {
     logger.error(
@@ -120,10 +119,10 @@ export async function updateAttachmentUrl(
   await todosAccess.updateAttachmentUrl(todoId, attachmentUrl)
 }
 
-export async function generateUploadUrl(attachmentId: string): Promise<string> {
-  logger.info(`Generating upload URL for attachment ${attachmentId}`)
-
+export async function createAttachmentPresignedUrl(attachmentId: string): Promise<string> {
   const uploadUrl = await todosStorage.getUploadUrl(attachmentId)
+
+  logger.info(`Generate upload URL for attachment ${attachmentId}`)
 
   return uploadUrl
 }

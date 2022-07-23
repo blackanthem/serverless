@@ -25,6 +25,7 @@ export const handler = async (
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: ''
+    body: '',
+    isBase64Encoded: false
   }
 }
