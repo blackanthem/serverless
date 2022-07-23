@@ -19,20 +19,24 @@ export class TodosAccess {
   ) {}
 
   async getTodoItems(userId: string): Promise<TodoItem[]> {
-    const result = await this.docClient
-      .query({
-        TableName: this.tableName,
-        IndexName: this.indexName,
-        KeyConditionExpression: 'userId = :userId',
-        ExpressionAttributeValues: {
-          ':userId': userId
-        }
-      })
-      .promise()
+    try {
+      const result = await this.docClient
+        .query({
+          TableName: this.tableName,
+          IndexName: this.indexName,
+          KeyConditionExpression: 'userId = :userId',
+          ExpressionAttributeValues: {
+            ':userId': userId
+          }
+        })
+        .promise()
 
-    logger.info(`Get todo items for user: ${userId}`)
+      logger.info(`Get todo items for user: ${result} - ${userId}`)
 
-    return result.Items as TodoItem[]
+      return result.Items as TodoItem[]
+    } catch (error) {
+      return error
+    }
   }
 
   async getTodoItem(todoId: string): Promise<TodoItem> {

@@ -119,7 +119,9 @@ export async function updateAttachmentUrl(
   await todosAccess.updateAttachmentUrl(todoId, attachmentUrl)
 }
 
-export async function createAttachmentPresignedUrl(attachmentId: string): Promise<string> {
+export async function createAttachmentPresignedUrl(
+  attachmentId: string
+): Promise<string> {
   const uploadUrl = await todosStorage.getUploadUrl(attachmentId)
 
   logger.info(`Generate upload URL for attachment ${attachmentId}`)
