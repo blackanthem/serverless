@@ -5,23 +5,19 @@ import * as AWSXRay from 'aws-xray-sdk'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-export class TodosStorage {
-  constructor(
-    private readonly s3 = new XAWS.S3({ signatureVersion: 'v4' }),
-    private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET,
-    private readonly urlExpiration = process.env.SIGNED_URL_EXPIRATION
-  ) {}
+const s3 = new XAWS.S3({ signatureVersion: 'v4' })
+const bucketName = process.env.ATTACHMENT_S3_BUCKET
+const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 
-  async getAttachmentUrl(attachmentId: string) {
-    return `https://${this.bucketName}.s3.amazonaws.com/${attachmentId}`
-  }
+export async function getAttachmentUrl(attachmentId: string) {
+  return `https://${bucketName}.s3.amazonaws.com/${attachmentId}`
+}
 
-  async getUploadUrl(attachmentId: string): Promise<string> {
-    const uploadUrl = await this.s3.getSignedUrl('putObject', {
-      Bucket: this.bucketName,
-      Key: attachmentId,
-      Expires: this.urlExpiration
-    })
-    return uploadUrl
-  }
+export async function getUploadUrl(attachmentId: string): Promise<string> {
+  const uploadUrl = await s3.getSignedUrl('putObject', {
+    Bucket: bucketName,
+    Key: attachmentId,
+    Expires: urlExpiration
+  })
+  return uploadUrl
 }

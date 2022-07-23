@@ -1,6 +1,5 @@
 import { TodosAccess } from '../dataLayer/TodosAccess'
-import { TodosStorage } from '../dataLayer/TodosStorage'
-// import { AttachmentUtils } from './attachmentUtils'
+import { getAttachmentUrl, getUploadUrl } from '../dataLayer/todosStorage'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
@@ -14,13 +13,11 @@ import * as uuid from 'uuid'
 const logger = createLogger('todos')
 
 const todosAccess = new TodosAccess()
-const todosStorage = new TodosStorage()
 
 export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
   const todos = await todosAccess.getTodoItems(userId)
 
   logger.info(`Get todos for user — ${userId}`)
-
   return todos
 }
 
@@ -55,17 +52,14 @@ export async function updateTodo(
   todoId: string,
   updateTodoRequest: UpdateTodoRequest
 ) {
-  logger.info(`Update todo — ${todoId} for user ${userId}`, {
-    userId,
-    todoId,
-    todoUpdate: updateTodoRequest
-  })
-
   const item = await todosAccess.getTodoItem(todoId, userId)
-
   if (!item) throw new Error('Item not found')
 
-  await todosAccess.updateTodoItem(todoId, updateTodoRequest as TodoUpdate, userId)
+  await todosAccess.updateTodoItem(
+    todoId,
+    updateTodoRequest as TodoUpdate,
+    userId
+  )
 }
 
 export async function deleteTodo(todoId: string, userId: string) {
@@ -82,13 +76,11 @@ export async function updateAttachmentUrl(
   todoId: string,
   attachmentId: string
 ) {
-  logger.info(`Generating attachment URL for attachment ${attachmentId}`)
+  logger.info(`Generate attachment URL: ${attachmentId}`)
 
-  const attachmentUrl = await todosStorage.getAttachmentUrl(attachmentId)
-
+  const attachmentUrl = await getAttachmentUrl(attachmentId)
 
   const item = await todosAccess.getTodoItem(todoId, userId)
-
   if (!item) throw new Error('Item not found')
 
   await todosAccess.updateAttachmentUrl(todoId, userId, attachmentUrl)
@@ -97,7 +89,7 @@ export async function updateAttachmentUrl(
 export async function createAttachmentPresignedUrl(
   attachmentId: string
 ): Promise<string> {
-  const uploadUrl = await todosStorage.getUploadUrl(attachmentId)
+  const uploadUrl = await getUploadUrl(attachmentId)
 
   logger.info(`Generate upload URL for attachment ${attachmentId}`)
 
