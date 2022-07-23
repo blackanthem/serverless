@@ -13,19 +13,31 @@ export const handler = async (
 ): Promise<APIGatewayProxyResult> => {
   logger.info('Handle Update Todo request', { event })
 
-  const userId = getUserId(event)
-  const todoId = event.pathParameters.todoId
-  const todo: UpdateTodoRequest = JSON.parse(event.body)
+  try {
+    const userId = getUserId(event)
+    const todoId = event.pathParameters.todoId
+    const todo: UpdateTodoRequest = JSON.parse(event.body)
 
-  const res = await updateTodo(userId, todoId, todo)
+    await updateTodo(userId, todoId, todo)
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
-    },
-    body: JSON.stringify({ res }),
-    isBase64Encoded: false
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: '',
+      isBase64Encoded: false
+    }
+  } catch (error) {
+    return {
+      statusCode: 404,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: 'Resource not found',
+      isBase64Encoded: false
+    }
   }
 }

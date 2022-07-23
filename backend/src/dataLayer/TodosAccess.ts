@@ -62,13 +62,14 @@ export class TodosAccess {
     logger.info(`Create todo item — ${todoItem.todoId}`)
   }
 
-  async updateTodoItem(todoId: string, todoUpdate: TodoUpdate) {
+  async updateTodoItem(todoId: string, todoUpdate: TodoUpdate, userId) {
     try {
-      const res = await this.docClient
+      await this.docClient
         .update({
           TableName: this.tableName,
           Key: {
-            todoId
+            todoId,
+            userId
           },
           UpdateExpression:
             'set #name = :name, dueDate = :dueDate, done = :done',
@@ -84,7 +85,6 @@ export class TodosAccess {
         .promise()
 
       logger.info(`Update todo item — ${todoId}`)
-      return res
     } catch (error) {
       return error
     }
@@ -109,12 +109,13 @@ export class TodosAccess {
     }
   }
 
-  async updateAttachmentUrl(todoId: string, attachmentUrl: string) {
+  async updateAttachmentUrl(todoId: string, attachmentUrl: string, userId) {
     await this.docClient
       .update({
         TableName: this.tableName,
         Key: {
-          todoId
+          todoId,
+          userId
         },
         UpdateExpression: 'set attachmentUrl = :attachmentUrl',
         ExpressionAttributeValues: {
